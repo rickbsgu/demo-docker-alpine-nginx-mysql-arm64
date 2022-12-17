@@ -1,0 +1,5 @@
+#! /bin/bash
+docker run -dp 3200:3000 \
+    -w /app -v "$(pwd):/app" \
+    node:12-alpine \
+    sh -c "apk --no-cache --virtual build-dependencies add python2 make g++ && yarn install && yarn run dev"

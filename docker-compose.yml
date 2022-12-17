@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  app:
+    image: arm64v8/node:14-alpine
+    command: sh -c "apk --no-cache --virtual build-dependencies add python3 make g++ && yarn install && yarn run dev"
+    ports: [ 3200:3000 ]
+    working_dir: /app
+    volumes: [ ./:/app ]
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_USER: root
+      MYSQL_PASSWORD: secret
+      MYSQL_DB: todos
+
+  mysql:
+    image: arm64v8/mysql
+    restart: always
+
+    volumes: 
+      - todo-mysql-data:/var/lib/mysql,
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment: 
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: todos
+
+volumes:
+  todo-mysql-data:
+

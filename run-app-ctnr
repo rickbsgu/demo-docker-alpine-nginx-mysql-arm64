@@ -1,0 +1,18 @@
+#! /bin/bash
+# Issues running on mac m1 - docker vm is arm and needs arm version
+# builds.  sqlite3 is a problem on later versions of alpine.
+# Also, it needs gyp, which means it needs python and g++ to build
+# it.
+#
+# Could probably use another dist than alpine, but I can make it work,
+# and I like alpine, so I'll keep it.
+#
+docker run -dp 3200:3000 \
+    -w /app -v "$(pwd):/app" \
+    --network todo-net \
+    -e MYSQL_HOST=mysql \
+    -e MYSQL_USER=root \
+    -e MYSQL_PASSWORD=secret \
+    -e MYSQL_DB=todos \
+    arm64v8/node:14-alpine \
+    sh -c "apk --no-cache --virtual build-dependencies add python3 make g++ &&yarn install && yarn run dev"
